@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Daftar Produk</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-5">
+    <div class="mb-4">
+        <h1>Manajemen Produk</h1>
+    </div>
+
+    <!-- Tombol Tambah Produk -->
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#tambahModal">Tambah Produk</button>
+
+    <!-- Tabel Produk -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nama Produk</th>
+                <th>Harga</th>
+                <th>Kategori</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range .Produk }}
+            <tr>
+                <td>{{ .IDProduk }}</td>
+                <td>{{ .NamaProduk }}</td>
+                <td>{{ .Harga }}</td>
+                <td>{{ .Kategori.NamaKategori }}</td>
+                <td>
+                    <a href="/hapus?id={{ .IDProduk }}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin hapus?')">Hapus</a>
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ .IDProduk }}">Edit</button>
+
+                    <!-- Modal Edit -->
+                    <div class="modal fade" id="editModal{{ .IDProduk }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <form method="POST" action="/edit" class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit Produk</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" name="id" value="{{ .IDProduk }}">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nama Produk</label>
+                                        <input type="text" class="form-control" name="nama_produk" value="{{ .NamaProduk }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Harga</label>
+                                        <input type="number" class="form-control" name="harga" value="{{ .Harga }}">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Kategori</label>
+                                        <select class="form-select" name="kategori_id">
+                                            {{ range $.Kategori }}
+                                            <option value="{{ .ID }}" {{ if eq $.ID .ID }}selected{{ end }}>{{ .NamaKategori }}</option>
+                                            {{ end }}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button class="btn btn-primary" type="submit">Simpan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+
+    <!-- Modal Tambah -->
+    <div class="modal fade" id="tambahModal" tabindex="-1">
+        <div class="modal-dialog">
+            <form method="POST" action="/tambah" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Produk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Produk</label>
+                        <input type="text" class="form-control" name="nama_produk" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Harga</label>
+                        <input type="number" class="form-control" name="harga" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Kategori</label>
+                        <select class="form-select" name="kategori_id" required>
+                            {{ range .Kategori }}
+                            <option value="{{ .ID }}">{{ .NamaKategori }}</option>
+                            {{ end }}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button class="btn btn-primary" type="submit">Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
